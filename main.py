@@ -20,9 +20,8 @@ font1 = ('Serpentine', 40)
 
 # All the stuff inside your window.
 text_layout = [  
-            [sg.Text('Budget Buddy', font=font1)],
-            [sg.Text('Enter your name')],
-            [sg.Text('Enter your password')],
+            [sg.Text('Enter your Username')],
+            [sg.Text('Enter your Password')]
         ]
 
 input_layout = [
@@ -31,16 +30,21 @@ input_layout = [
 ]
 
 button_layout = [
-    [sg.Button('Enter'), sg.Button('Sign Up', key='SIGN UP')],
-    [sg.Button('Exit')]
+    [sg.Button('Enter'), sg.Button('Sign Up', key='SIGN UP'), sg.Button('Exit')]
 ]
 
 layout = [
-    sg.Column()
+    [sg.Text('Budget Buddy', font=font1)],
+    [
+    sg.Column(text_layout),
+    sg.Column(input_layout)
+    ],
+    [sg.Text("")],
+    [button_layout]
 ]
 
 #Create Window
-window = sg.Window("Budget Buddy", layout, element_justification='center')
+window = sg.Window("Budget Buddy", layout, element_justification='center', size=(400, 200))
 
 while True:
     event, values = window.read()

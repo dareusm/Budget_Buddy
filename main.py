@@ -30,10 +30,10 @@ input_layout = [
 ]
 
 button_layout = [
-    [sg.Button('Enter'), sg.Button('Sign Up', key='SIGN UP'), sg.Button('Exit')]
+    [sg.Button('Enter', key="ENTER"), sg.Button("Sign Up", key="SIGN UP"), sg.Button("Exit")]
 ]
 
-layout = [
+login_layout = [
     [sg.Text('Budget Buddy', font=font1)],
     [
     sg.Column(text_layout),
@@ -43,18 +43,55 @@ layout = [
     [button_layout]
 ]
 
-#Create Window
-window = sg.Window("Budget Buddy", layout, element_justification='center', size=(400, 200))
 
+
+sign_up_column = [
+    [sg.Text('First Name')],
+    [sg.Text('Last Name')],
+    [sg.Text('Username')],
+    [sg.Text('Password')],
+    [sg.Text('Confirm Password')],
+]
+
+fill_out_column = [
+    [sg.InputText()],
+    [sg.InputText()],
+    [sg.InputText()],
+    [sg.InputText()],
+    [sg.InputText()]
+]
+
+sign_up_layout = [
+    [sg.Text("Sign Up", font=font1, justification='center')],
+    [sg.Column(sign_up_column), sg.Column(fill_out_column)],
+    [sg.Button("Enter", key="SIGN_UP_ENTER")]    
+]
+
+
+#Create Window
+window = sg.Window("Budget Buddy", login_layout, element_justification='center', size=(400, 200))
+
+#Window loop
 while True:
     event, values = window.read()
     if event == "Exit" or event == sg.WIN_CLOSED:
         break
     
-    if event == 'Sign Up':
+    #Set up button events
+    if event == "ENTER":
+        print("Enter was pressed")
+    elif event == "SIGN UP":
         window.close()
-        sg.Popup('Sign Up')
-        
+        sign_up_window = sg.Window("Budget Buddy", sign_up_layout, size=(600, 300)).read()
+        #Loop for sign up window
+        while True:
+            event, values = window.read()
+            if event == sg.WIN_CLOSED:
+                break
+            
+            if event == "SIGN_UP_ENTER":
+                print("Entered in Database")
+                
         
 
 

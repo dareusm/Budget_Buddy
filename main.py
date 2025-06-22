@@ -1,8 +1,9 @@
 import PySimpleGUI as sg
 import psycopg2
 import credentials
+import sign_up 
 
-class login_signup():
+class login():
 
     def __init__(self):
 
@@ -47,61 +48,22 @@ class login_signup():
             [self.button_layout]
         ]
 
-        # Set up sign up page
-        self.sign_up_column = [
-            [sg.Text('First Name')],
-            [sg.Text('Last Name')],
-            [sg.Text('Username')],
-            [sg.Text('Password')],
-            [sg.Text('Confirm Password')],
-        ]
-
-        first_name_input = [sg.InputText()]
-        last_name_input = [sg.InputText()]
-        username_input = [sg.InputText()]
-        password_input = [sg.InputText()]
-        conf_password_input = [sg.InputText()]
-
-        self.fill_out_column = [
-            first_name_input,
-            last_name_input,
-            username_input,
-            password_input,
-            conf_password_input,
-        ]
-
-        self.sign_up_layout = [
-            [sg.Text("Sign Up", font=font1, justification='center')],
-            [sg.Column(self.sign_up_column), sg.Column(self.fill_out_column)],
-            [sg.Button("Enter", key="SIGN_UP_ENTER")]    
-        ]
-
         # Create Window
         self.window = sg.Window("Budget Buddy", self.login_layout, element_justification='center', size=(400, 200))
 
         # Window loop
-        while True:
+        running = True
+        while running:
             event, values = self.window.read()
             if event == "Exit" or event == sg.WIN_CLOSED:
+                running = False
                 break
 
             # Set up button events
             if event == "ENTER":
                 print("Enter was pressed")
             elif event == "SIGN UP":
+                print("success")
                 self.window.close()
-                sign_up_window = sg.Window("Budget Buddy", self.sign_up_layout, size=(600, 300)).read()
-                # Loop for sign up window
-                while True:
-                    event, values = self.window.read()
-                    if event == sg.WIN_CLOSED:
-                        break
-
-                    if event == "SIGN_UP_ENTER":
-                        if password_input != conf_password_input:
-                            sg.popup('Passwords do not match!')
-                        else:
-                            cur.execute("INSERT INTO users (firstname, lastname, username, password) VALUE (%s, %s, %s, %s)", (first_name_input, last_name_input, username_input, password_input))
-                            print('success')
-
-gui = login_signup()
+                sign_up.Signup()
+gui = login()

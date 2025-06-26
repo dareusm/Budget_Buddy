@@ -63,7 +63,6 @@ class login():
             if event == "ENTER":
                 print("Enter was pressed")
             elif event == "SIGN UP":
-                print("success")
                 self.window.close()
                 sign_up.Signup()
 gui = login()

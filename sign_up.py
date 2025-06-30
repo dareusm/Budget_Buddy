@@ -1,21 +1,22 @@
 import PySimpleGUI as sg
 import psycopg2
 import credentials
+import login
+
+# Establish connection to database
+conn = psycopg2.connect(
+    dbname=credentials.db_name,
+    user=credentials.username,
+    password=credentials.password,
+    host="localhost",
+    port="5432",
+)
+cur = conn.cursor()
 
 
 class Signup:
 
     def __init__(self):
-        # Establish connection to database
-        conn = psycopg2.connect(
-            dbname=credentials.db_name,
-            user=credentials.username,
-            password=credentials.password,
-            host="localhost",
-            port="5432",
-        )
-        cur = conn.cursor()
-
         # Set Font
         font1 = ("Serpentine", 40)
 
@@ -53,11 +54,17 @@ class Signup:
             [sg.Text("")],
             [sg.Column(self.sign_up_column), sg.Column(self.fill_out_column)],
             [sg.Text("")],
-            [sg.Push(), sg.Button("Enter", key="SIGN_UP_ENTER", size=(10, 2))],
+            [
+                sg.Push(),
+                sg.Button("Back", key="BACK_BTN", size=(10, 2)),
+                sg.Button("Enter", key="SIGN_UP_ENTER", size=(10, 2)),
+            ],
         ]
 
         self.window = sg.Window("Budget Buddy", self.sign_up_layout, size=(600, 380))
 
+    # Loop used to run sign up page
+    def run(self):
         # Set Loop
         running = True
         while running:
@@ -65,6 +72,11 @@ class Signup:
             if event == "Exit" or event == sg.WIN_CLOSED:
                 running = False
                 break
+
+            # Returns you to the main page (login page)
+            if event == "BACK_BTN":
+                self.window.close()
+                return "login"
 
             if event == "SIGN_UP_ENTER":
                 password_in = values["password"]
@@ -74,14 +86,31 @@ class Signup:
                 email_in = values["email"]
                 username_in = values["username"]
                 birthday_in = values["birthday"]
-                if not all ([first_name_in, last_name_in, email_in, username_in, birthday_in]):
+                if not all(
+                    [
+                        first_name_in,
+                        last_name_in,
+                        email_in,
+                        username_in,
+                        birthday_in,
+                    ]
+                ):
                     sg.popup("Please fill in all fields")
                 elif password_in != conf_password_in:
                     sg.popup("Passwords do not match!")
                 else:
                     print("success")
-                    
-                    cur.execute("INSERT INTO users (firstname, lastname, email, username, password, birthday) VALUES (%s, %s, %s, %s, %s, %s)", (first_name_in, last_name_in, email_in, username_in, password_in, birthday_in))
+
+                    cur.execute(
+                        "INSERT INTO users (firstname, lastname, email, username, password, birthday) VALUES (%s, %s, %s, %s, %s, %s)",
+                        (
+                            first_name_in,
+                            last_name_in,
+                            email_in,
+                            username_in,
+                            password_in,
+                            birthday_in,
+                        ),
+                    )
                     conn.commit()
                     conn.close()
-                    

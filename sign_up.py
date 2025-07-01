@@ -1,9 +1,16 @@
 import PySimpleGUI as sg
 import psycopg2
 import credentials
-import login
+from db_access import DBAccess
+
+
+conn = None
+cur = None
 
 # Establish connection to database
+db = DBAccess()
+db.connect()
+"""
 conn = psycopg2.connect(
     dbname=credentials.db_name,
     user=credentials.username,
@@ -12,7 +19,7 @@ conn = psycopg2.connect(
     port="5432",
 )
 cur = conn.cursor()
-
+"""
 
 class Signup:
 
@@ -101,7 +108,7 @@ class Signup:
                 else:
                     print("success")
 
-                    cur.execute(
+                    db.cur.execute(
                         "INSERT INTO users (firstname, lastname, email, username, password, birthday) VALUES (%s, %s, %s, %s, %s, %s)",
                         (
                             first_name_in,
@@ -112,5 +119,7 @@ class Signup:
                             birthday_in,
                         ),
                     )
-                    conn.commit()
-                    conn.close()
+                    db.conn.commit()
+                    db.conn.close()
+                    self.window.close()
+                    return "login"

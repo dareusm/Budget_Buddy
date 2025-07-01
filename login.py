@@ -1,23 +1,28 @@
 import PySimpleGUI as sg
 import psycopg2
 import credentials
-import sign_up
+from db_access import DBAccess
+import dashboard
 
+conn = None
+cur = None
 
+# Establish connection to database
+db = DBAccess()
+db.connect()
+"""
+conn = psycopg2.connect(
+    dbname=credentials.db_name,
+    user=credentials.username,
+    password=credentials.password,
+    host="localhost",
+    port="5432",
+)
+cur = conn.cursor()
+"""
 class Login:
 
     def __init__(self):
-
-        # Establish connection to database
-        conn = psycopg2.connect(
-            dbname=credentials.db_name,
-            user=credentials.username,
-            password=credentials.password,
-            host="localhost",
-            port="5432",
-        )
-        cur = conn.cursor()
-
         # Create Gui Parameters
         sg.theme("DarkAmber")  # Add a touch of color
 
@@ -30,7 +35,7 @@ class Login:
             [sg.Text("Enter your Password")],
         ]
 
-        self.input_layout = [[sg.InputText()], [sg.InputText()]]
+        self.input_layout = [[sg.InputText(key="USERNAME")], [sg.InputText(key="PASSWORD")]]
 
         self.button_layout = [
             [
@@ -67,9 +72,29 @@ class Login:
 
             # Set up button events
             if event == "ENTER":
-                print("Enter was pressed")
+                username_input = values["USERNAME"] #To Check password for this particular username
+                password_input = values["PASSWORD"]
+                print("HIT")
+                db.cur.execute(
+                    "SELECT password FROM users WHERE username = %s", (username_input,)
+                )
+                result = db.cur.fetchone()
+                
+                if result:
+                    db_password = result[0]
+                    if password_input == db_password:
+                        self.window.close()
+                        print("Success")
+                        dashboard.Dashboard()
+                        db.conn.commit()
+                        db.conn.close()
+                    else:
+                        sg.Popup("Username and Password Do Not Match!")
+                            
             elif event == "SIGN UP":
                 self.window.close()
+                db.conn.commit()
+                db.conn.close()
                 return "SIGN UP"
 
 

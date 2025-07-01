@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_tkagg as FigureCanvasTkAgg
 
-class dashboard:
+class Dashboard:
 
     def __init__(self):
         sg.theme("DarkAmber")
@@ -37,4 +37,4 @@ class dashboard:
             if event == "Exit" or event == sg.WIN_CLOSED:
                 break  
         
-user_dashboard = dashboard()
+#user_dashboard = Dashboard()
